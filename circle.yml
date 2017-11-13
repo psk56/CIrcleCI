@@ -1,0 +1,23 @@
+#
+# Build configuration for Circle CI
+#
+
+general:
+    artifacts:
+        - E:\Nachiket\000Latest Apps\November-2017\CirCleCIDemo\app\build\outputs\apk\debug\
+
+machine:
+    java:
+        version: oraclejdk8
+    environment:
+        ANDROID_HOME: E:\Dontuse\Software\kirti\android-sdk_2_19_windows\android-sdk_2_19_windows
+
+dependencies:
+    override:
+        - echo y | android update sdk --no-ui --all --filter tools,platform-tools,build-tools-21.1.2,android-21,extra-google-m2repository,extra-google-google_play_services,extra-android-support
+        - ANDROID_HOME=E:\Dontuse\Software\kirti\android-sdk_2_19_windows\android-sdk_2_19_windows ./gradlew dependencies
+
+test:
+    override:
+        - (./gradlew assemble):
+            timeout: 360
