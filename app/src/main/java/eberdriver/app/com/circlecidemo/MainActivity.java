@@ -12,5 +12,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         TextView textView=new TextView(this);
+        TextView textView1=new TextView(this);
     }
 }
