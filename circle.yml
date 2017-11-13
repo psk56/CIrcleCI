@@ -13,7 +13,7 @@ jobs:
           command: echo 'export KEYSTORE=$(pwd)/signing.jks' >> $BASH_ENV
       - restore_cache:
           key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
-     
+
       - save_cache:
           paths:
             - ~/.gradle
