@@ -38,7 +38,30 @@ jobs:
       - store_test_results:
           path: app/build/test-results
     deployment:
-        alpha:
-            branch: beauty-android
+        production:
+            branch: master
             commands:
-               - ./gradlew publishApkProductionRelease
+                # Increment version
+                - ./gradlew incrementVersion
+                # assemble flavors
+                - ./gradlew assembleStagingRelease assembleBetaRelease assembleProductionRelease
+                # upload to Fabric Beta
+                - ./gradlew crashlyticsUploadDistributionStagingRelease crashlyticsUploadDistributionBetaRelease crashlyticsUploadDistributionProductionRelease
+                # make a directory and write release notes to it.
+                - sudo mkdir -p mobile/src/main/play/en-US && sudo cp play_store_release_notes.txt mobile/src/main/play/en-US/whatsnew.txt
+                # publish APK to the Play Store
+                - ./gradlew :mobile:publishApkProductionRelease
+                # delete previously created notes
+                - sudo rm -rf mobile/src/main/play
+                # export version var
+                - echo "export VERSION_NUMBER=`grep app_version= gradle.properties | awk '{split($0,a,\"=\") ; print a[2] }'`" >> ~/.bashrc
+                # export rollout percent var
+                - echo "export ROLLOUT_PERC=`grep 'userFraction' mobile/build.gradle | egrep -o '[0-9].[0-9]{1,}' | awk '{ VAR = $1*100} END {print VAR}'`" >> ~/.bashrc
+                # post to slack
+                - curl -X POST --data-urlencode "payload={\"text\":\"New Android Release v$VERSION_NUMBER in the Play Store at $ROLLOUT_PERC%.\n\n $(cat fabric_beta_release_notes.txt)\"}" <The Slack channel>
+                # bump version and push
+                - git commit -am "Bump to $VERSION_NUMBER [skip ci]"
+                - git push origin master
+                # create GitHub release
+                - echo "export API_JSON=\"{\"tag_name\":\"v$VERSION_NUMBER\",\"target_commitish\":\"master\",\"name\":\"v$VERSION_NUMBER\",\"body\":\"Release of version v$VERSION_NUMBER\",\"draft\":false,\"prerelease\":false}\"" >> ~/.bashrc
+                - curl --data "$GIT_HUB_RELEASE_JSON" https://api.github.com/repos/everalbum/android/releases?access_token=<some token>
