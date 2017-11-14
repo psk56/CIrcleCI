@@ -32,15 +32,16 @@ jobs:
       - run:
           name: Run Tests
           command: ./gradlew lint test
-      - run:
-          name: assemble flavors
-          command: ./gradlew assembleStagingRelease assembleBetaRelease assembleProductionRelease
+
 
       - store_artifacts:
           path: app/build/reports
           destination: reports
       - store_test_results:
           path: app/build/test-results
+       - run:
+                name: publish APK to the Play Store
+                command: ./gradlew :mobile:publishApkProductionRelease
 
     workflows:
        version: 2
