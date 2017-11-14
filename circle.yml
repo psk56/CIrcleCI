@@ -10,7 +10,7 @@ jobs:
       - checkout
       - run:
           name: export KEYSTORE path
-          command: echo 'export KEYSTORE=$(pwd)/signing.jks' >> $BASH_ENV
+          command: echo 'export KEYSTORE=$(circlecidemo)/E:\Nachiket\work\CircleCIDemo\circlecidemo.jks' >> $BASH_ENV
       - restore_cache:
           key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
       - run:
