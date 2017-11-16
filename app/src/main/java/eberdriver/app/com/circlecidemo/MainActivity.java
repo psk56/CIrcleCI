@@ -20,6 +20,7 @@ public class MainActivity extends AppCompatActivity {
         TextView textView7=new TextView(this);
         TextView textView8=new TextView(this);
         TextView textView9=new TextView(this);
+        TextView textView98=new TextView(this);
 
 
     }
